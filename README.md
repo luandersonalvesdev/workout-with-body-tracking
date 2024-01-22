@@ -18,7 +18,7 @@ workouts-with-body-tracking/
 
 Cada pasta contém os seguintes elementos:
 
-## How to Use
+## How to use
 
 To use a script, see the `README.md` file in the corresponding exercise folder. `README.md` will provide instructions for what it is for and step-by-step instructions on how to configure and run the script.
 
@@ -75,7 +75,7 @@ pip install -r dev-requirements.txt
 python exercise_one/exercise_one.py
 ```
 
-## Contribuições
+## Contributions
 
 This project welcomes contributions from the community. If you want to add a new script not included or enhance an existing script, feel free to *fork* this repository, make the necessary changes, and submit a *pull request*.
 
