@@ -13,9 +13,9 @@ The squat_counter script is a body tracking application that includes a squat co
   - **is_show_squat_range_line**: A boolean indicating whether the user wants the line representing the acceptable limit to be displayed or not.
   - **is_show_body_tracking_line**: A boolean indicating whether the user wants the body tracking lines to be displayed or not.
 
-## To use
+## How to use
 
-If you have followed all the instructions provided in the initial [README.md](https://github.com/luandersonalvesdev/workout-with-body-tracking), you are now ready to use this script. Just run the script with python.
+If you have followed all the instructions provided in the initial [README.md](https://github.com/luandersonalvesdev/workout-with-body-tracking?tab=readme-ov-file#workouts-with-body-tracking), you are now ready to use this script. Just run the script with python.
 ```bash
 python squat_counter.py
 ```
