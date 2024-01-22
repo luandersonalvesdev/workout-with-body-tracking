@@ -1,5 +1,5 @@
 {
-  "acceptance_range_for_squats": 40,
+  "acceptance_range_for_squats": 0,
   "is_show_squat_range_line": true,
   "is_show_body_tracking_line": true
 }

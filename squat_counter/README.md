@@ -4,7 +4,7 @@ The squat_counter script is a body tracking application that includes a squat co
 
 ```json
 {
-  "acceptance_range_for_squats": 40,
+  "acceptance_range_for_squats": 0,
   "is_show_squat_range_line": true,
   "is_show_body_tracking_line": true,
 }
