@@ -1,15 +1,17 @@
+import time
 import cv2 as cv
 import mediapipe as mp
 import os
 import json
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-config_path = os.path.join(script_dir, 'config.json')
-with open(config_path, 'r') as config_file:
+config_path = os.path.join(script_dir, "config.json")
+with open(config_path, "r") as config_file:
     config = json.load(config_file)
 
-acceptance_range_for_squats = config.get('acceptance_range_for_squats', 0)
-show_squat_range_line = config.get('show_squat_range_line', False)
+acceptance_range_for_squats = config.get("acceptance_range_for_squats", 0)
+is_show_squat_range_line = config.get("is_show_squat_range_line", True)
+is_show_body_tracking_line = config.get("is_show_body_tracking_line", True)
 
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose()
@@ -19,22 +21,66 @@ video = cv.VideoCapture(0)
 squats_counter = 0
 reset_counter_gesture = False
 squat_pose_detected = False
+reset_timer_gesture = False
+start_time = None
 
 red_color = (0, 0, 255)
 green_color = (0, 255, 0)
 blue_color = (255, 0, 0)
+white_color = (255, 255, 255)
+black_color = (0, 0, 0)
+
 
 def show_squats_counter(squats_counter):
     cv.putText(
         frame,
         f"{squats_counter}",
-        (10, 60),
+        (50, 90),
         cv.FONT_HERSHEY_SCRIPT_SIMPLEX,
-        2,
-        green_color,
+        3,
+        red_color,
         2,
         cv.LINE_AA,
     )
+
+
+def show_timer(timer):
+    font = cv.FONT_HERSHEY_PLAIN
+    font_scale = 2
+    font_thickness = 2
+    timer_text = f"{timer}"
+    text_size = cv.getTextSize(timer_text, font, font_scale, font_thickness)[0]
+    text_x = (frame.shape[1] - text_size[0]) // 2
+    text_y = frame.shape[0] - 20
+
+    rect_width = text_size[0] + 10
+    cv.rectangle(
+        frame,
+        (text_x - 5, text_y - text_size[1] - 5),
+        (text_x + rect_width, text_y + 5),
+        black_color,
+        thickness=cv.FILLED,
+    )
+
+    cv.putText(
+        frame,
+        timer_text,
+        (text_x, text_y),
+        font,
+        font_scale,
+        red_color,
+        font_thickness,
+        cv.LINE_AA,
+    )
+
+
+def timer_formatter(elapsed_time):
+    minutes = int(elapsed_time // 60)
+    seconds = int(elapsed_time % 60)
+    milliseconds = int((elapsed_time % 1) * 1000)
+    timer_text = f"{minutes:02d}:{seconds:02d}:{milliseconds:03d}"
+    return timer_text
+
 
 while video.isOpened():
     success, frame = video.read()
@@ -49,8 +95,10 @@ while video.isOpened():
 
     pose_detected_with_confidence = (
         result.pose_landmarks
-        and result.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].visibility > 0.5
-        and result.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].visibility > 0.5
+        and result.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_HIP].visibility
+        > 0.5
+        and result.pose_landmarks.landmark[mp_pose.PoseLandmark.LEFT_HIP].visibility
+        > 0.5
     )
 
     if pose_detected_with_confidence:
@@ -60,38 +108,42 @@ while video.isOpened():
             for landmark in result.pose_landmarks.landmark
         ]
 
-        connections = mp_pose.POSE_CONNECTIONS
-        for connection in connections:
-            start_point = landmarks_pixel[connection[0]]
-            end_point = landmarks_pixel[connection[1]]
-            cv.line(frame, start_point, end_point, green_color, 2)
+        if is_show_body_tracking_line:
+            connections = mp_pose.POSE_CONNECTIONS
+            for connection in connections:
+                start_point = landmarks_pixel[connection[0]]
+                end_point = landmarks_pixel[connection[1]]
+                cv.line(frame, start_point, end_point, green_color, 2)
 
         hip_left_value = landmarks_pixel[mp_pose.PoseLandmark.LEFT_HIP.value]
         hip_right_value = landmarks_pixel[mp_pose.PoseLandmark.RIGHT_HIP.value]
         knee_left_value = landmarks_pixel[mp_pose.PoseLandmark.LEFT_KNEE.value]
         knee_right_value = landmarks_pixel[mp_pose.PoseLandmark.RIGHT_KNEE.value]
 
-        squat_detected = (
-            hip_left_value[1] < (knee_left_value[1] - acceptance_range_for_squats) 
-            and
-            hip_right_value[1] < (knee_right_value[1] - acceptance_range_for_squats)
-        )
+        squat_detected = hip_left_value[1] < (
+            knee_left_value[1] - acceptance_range_for_squats
+        ) and hip_right_value[1] < (knee_right_value[1] - acceptance_range_for_squats)
 
         if not squat_detected:
             show_squats_counter(squats_counter + 1)
+            start_time = time.time()
         elif squat_detected:
             show_squats_counter(squats_counter)
 
         if squat_detected and not squat_pose_detected:
             squat_pose_detected = True
             squats_counter += 1
+            start_time = None
         elif not squat_detected:
             squat_pose_detected = False
 
-        if show_squat_range_line:
+        if is_show_squat_range_line:
             knee_left_y = knee_left_value[1]
             knee_right_y = knee_right_value[1]
-            range_line_y = int((knee_left_y - acceptance_range_for_squats + knee_right_y) / 2) - acceptance_range_for_squats
+            range_line_y = (
+                int((knee_left_y - acceptance_range_for_squats + knee_right_y) / 2)
+                - acceptance_range_for_squats
+            )
             cv.line(frame, (0, range_line_y), (w, range_line_y), red_color, 1)
 
         pose_reset_counter_detected = (
@@ -101,8 +153,16 @@ while video.isOpened():
         if pose_reset_counter_detected:
             reset_counter_gesture = True
             squats_counter = 0
+            start_time = time.time()
         elif reset_counter_gesture:
             reset_counter_gesture = False
+
+    if start_time is not None:
+        elapsed_time = time.time() - start_time
+        formatted_time = timer_formatter(elapsed_time)
+        show_timer(formatted_time)
+    else:
+        show_timer("00:00:000")
 
     cv.namedWindow("Squat counter", cv.WINDOW_NORMAL)
     cv.setWindowProperty("Squat counter", cv.WND_PROP_FULLSCREEN, cv.WINDOW_AUTOSIZE)
