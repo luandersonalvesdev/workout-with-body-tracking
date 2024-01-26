@@ -32,14 +32,35 @@ black_color = (0, 0, 0)
 
 
 def show_squats_counter(squats_counter):
+    font = cv.FONT_HERSHEY_SCRIPT_SIMPLEX
+    font_scale = 3
+    font_thickness = 2
+    counter_text = f"{squats_counter}"
+    text_size = cv.getTextSize(counter_text, font, font_scale, font_thickness)[0]
+    rect_x = 10
+    rect_y = 10
+    rect_width = text_size[0] + 20
+    rect_height = text_size[1] + 20
+
+    cv.rectangle(
+        frame,
+        (rect_x, rect_y),
+        (rect_x + rect_width, rect_y + rect_height),
+        black_color,
+        thickness=cv.FILLED,
+    )
+
+    text_x = rect_x + 10
+    text_y = rect_y + text_size[1] + 10
+
     cv.putText(
         frame,
-        f"{squats_counter}",
-        (50, 90),
-        cv.FONT_HERSHEY_SCRIPT_SIMPLEX,
-        3,
+        counter_text,
+        (text_x, text_y),
+        font,
+        font_scale,
         red_color,
-        2,
+        font_thickness,
         cv.LINE_AA,
     )
 
@@ -109,11 +130,8 @@ while video.isOpened():
         ]
 
         if is_show_body_tracking_line:
-            connections = mp_pose.POSE_CONNECTIONS
-            for connection in connections:
-                start_point = landmarks_pixel[connection[0]]
-                end_point = landmarks_pixel[connection[1]]
-                cv.line(frame, start_point, end_point, green_color, 2)
+            mp_drawing = mp.solutions.drawing_utils
+            mp_drawing.draw_landmarks(frame, result.pose_landmarks, mp_pose.POSE_CONNECTIONS)
 
         hip_left_value = landmarks_pixel[mp_pose.PoseLandmark.LEFT_HIP.value]
         hip_right_value = landmarks_pixel[mp_pose.PoseLandmark.RIGHT_HIP.value]
@@ -165,7 +183,6 @@ while video.isOpened():
         show_timer("00:00:000")
 
     cv.namedWindow("Squat counter", cv.WINDOW_NORMAL)
-    cv.setWindowProperty("Squat counter", cv.WND_PROP_FULLSCREEN, cv.WINDOW_AUTOSIZE)
     cv.imshow("Squat counter", frame)
 
     if cv.waitKey(1) & 0xFF == ord("q"):
