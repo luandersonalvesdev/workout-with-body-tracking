@@ -1,5 +1,7 @@
 # Squat counter
 
+![db_er](../assets/squat_counter_preview.gif)
+
 The squat_counter script is a body tracking application that includes a squat counting feature along with a timer to assist in exercises. Squats are counted when the hip's line on both sides goes below the knee line. The directory consists of the `squat_counter.py` script and a configuration file `config.json` containing three variables:
 
 ```json

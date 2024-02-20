@@ -1,6 +1,13 @@
 # Workouts with Body Tracking
 The **workouts-with-body-tracking** project is designed to enhance the experience of physical exercise through the use of body tracking techniques. Each directory in this repository contains specific `README.md` information about configurations and scripts related to body tracking, facilitating the integration of these tools into your fitness routine.
 
+### Squat Counter Preview
+<details> <summary> GIF 📹 </summary> 
+
+  ![db_er](./assets/squat_counter_preview.gif)
+
+</details>
+
 ## Repository Structure
 
 ```
