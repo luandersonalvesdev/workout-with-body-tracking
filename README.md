@@ -32,55 +32,83 @@ To use a script, see the `README.md` file in the corresponding exercise folder. 
 ## Get started
 
 <details>
-  <summary><strong>Make sure you have Python 3.3 or later and pip installed on your machine</strong></summary><br />
-  
-* To check if you have `python` and `pip`
-  ```bash
-  python3 --version && pip --version
-  ```
-* The output should be similar to something like this
-  ```
-  Python 3.8.10
-  pip 20.0.2 from /usr/lib/python3/dist-packages/pip (python 3.8)
-  ```
+  <summary><strong> LINUX </strong></summary>
+    Make sure you have Python 3.3 or later and pip installed on your machine
+        
+  * To check if you have `python` and `pip`
+    ```bash
+    python3 --version && pip --version
+    ```
+  * The output should be similar to something like this
+    ```
+    Python 3.8.10
+    pip 20.0.2 from /usr/lib/python3/dist-packages/pip (python 3.8)
+    ```
+
+  <br>
+
+  1. Make a clone of the repository and enter it
+
+      ```bash
+      git clone git@github.com:luandersonalvesdev/workout-with-body-tracking.git
+      cd workout-with-body-tracking
+      ```
+
+  2. Create a separate virtual environment with `venv`
+
+      ```bash
+      python3 -m venv environment_name
+      ```
+
+  3. Activate the virtual environment
+
+      ```bash
+      source environment_name/bin/activate
+      ```
+
+  4. Install dependencies from `dev-requirements.txt`
+      ```bash
+      pip install -r dev-requirements.txt
+      ```
+
+  6. Ready! Just run any script
+      ```bash
+      python exercise_one/exercise_one.py
+      ```
 </details>
 
-<br>
+<details>
+  <summary><strong> WINDOWS </strong></summary>
 
-1. Make a clone of the repository and enter it
+  1. Close all CMDs that are open.
 
-```bash
-git clone git@github.com:luandersonalvesdev/workout-with-body-tracking.git
-cd workout-with-body-tracking
-```
+  2. Download and install [Python 3.8.10](https://www.python.org/downloads/release/python-3810/).
 
-2. Create a separate virtual environment with `venv`
+  3. Go to the project directory and create a development environment.
+      ```bash
+      python -m venv nome_do_ambiente
+      ```
 
-```bash
-python3 -m venv environment_name
-```
+  4. Activate the development environment: 
+      ```bash
+      .\nome_do_ambiente\Scripts\activate
+      ```
 
-3. Activate the virtual environment
+  5. Install `opencv` and `mediapipe` separately:
 
-- Windows:
-    ```bash
-    environment_name\Scripts\activate
-    ```
+      ```bash
+      pip install opencv-python
+      ```
+      ```bash
+      pip install mediapipe
+      ```
 
-- Linux:
-    ```bash
-    source environment_name/bin/activate
-    ```
+  6. Execute:
+      ```bash
+      python squat_counter\squat_counter.py
+      ```
+</details>
 
-4. Install dependencies from `dev-requirements.txt`
-```bash
-pip install -r dev-requirements.txt
-```
-
-6. Ready! Just run any script
-```bash
-python exercise_one/exercise_one.py
-```
 
 ## Contributions
 
